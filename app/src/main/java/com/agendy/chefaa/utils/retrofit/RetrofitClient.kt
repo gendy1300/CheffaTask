@@ -36,7 +36,7 @@ class RetrofitClient @Inject constructor(
                     .readTimeout(60, TimeUnit.SECONDS)
                     .connectTimeout(60, TimeUnit.SECONDS)
                     .addInterceptor(NetworkInterceptor(context))
-                    .addInterceptor(AuthInterceptor(context.getString(R.string.app_name)))
+                    .addInterceptor(AuthInterceptor(context.getString(R.string.marvel_api_key)))
                     .also {
                         it.addInterceptor(logging)
                     }
@@ -48,4 +48,5 @@ class RetrofitClient @Inject constructor(
 
 
     }
+
 }

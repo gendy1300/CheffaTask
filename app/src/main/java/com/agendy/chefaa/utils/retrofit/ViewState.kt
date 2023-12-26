@@ -29,7 +29,6 @@ sealed class ViewState<out T> {
 @Composable
 fun <T> ViewState<T>.HandleState(
     showError: Boolean = true,
-    logoutUnauthorized: Boolean = true,
     onSuccess: @Composable (data: T) -> Unit,
     onError: ((exception: Exception) -> Unit)? = null
 ) {
@@ -62,23 +61,5 @@ fun <T> ViewState<T>.HandleState(
         ViewState.NotCalled -> {}
 
     }
-}
-
-
-fun <T> ViewState<T>.shouldCallApi(): Boolean {
-    return when (this) {
-        is ViewState.Error -> {
-            if (this.code == 401)
-                false
-            else
-                false
-        }
-
-        ViewState.Loading -> false
-        ViewState.NoInternetConnection -> true
-        ViewState.NotCalled -> true
-        is ViewState.Success -> false
-    }
-
 }
 
