@@ -8,26 +8,34 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import coil.Coil
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.agendy.chefaa.imageList.data.model.ImageListResponse
+import com.agendy.chefaa.imageList.data.model.ImageModel
+import com.agendy.chefaa.imageList.data.model.ImagesResult
+import com.agendy.chefaa.imageList.data.offlineStorge.ImagesDataBase
 import com.agendy.chefaa.imageList.domain.repositories.ImagesListRepo
 import com.agendy.chefaa.utils.retrofit.ViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class ImagesViewModel @Inject constructor(val repo: ImagesListRepo) : ViewModel() {
+class ImagesViewModel @Inject constructor(
+    private val repo: ImagesListRepo,
+    private val localDataBase: ImagesDataBase
+) : ViewModel() {
 
     private val _imagesResponse =
         mutableStateOf<ViewState<ImageListResponse>>(ViewState.NotCalled)
 
     val imagesResponse: State<ViewState<ImageListResponse>> = _imagesResponse
+
+    val images: Flow<List<ImageModel>?> = localDataBase.imagesProductsDao.getImages()
 
 
     fun processIntent(intent: ImagesViewIntent) {
@@ -40,8 +48,9 @@ class ImagesViewModel @Inject constructor(val repo: ImagesListRepo) : ViewModel(
                 callComics()
             }
 
-            is ImagesViewIntent.DownloadImage -> downloadImageWithCoil(
-                imageUrl = intent.imageUrl, imageId = intent.imageId, context = intent.context
+            is ImagesViewIntent.DownloadImage -> downloadImages(
+                items = intent.images,
+                context = intent.context
             )
         }
     }
@@ -62,9 +71,26 @@ class ImagesViewModel @Inject constructor(val repo: ImagesListRepo) : ViewModel(
     }
 
 
+    private fun downloadImages(items: List<ImagesResult>, context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            items.forEach { result ->
+
+                if (!localDataBase.imagesProductsDao.getImageWithId(result.id).isNullOrEmpty()) {
+                    val image = result.thumbnail
+                    downloadImageWithCoil(
+                        imageUrl = "${image?.path}.${image?.extension}",
+                        imageId = result.id,
+                        context = context
+                    )
+                }
+
+            }
+        }
+    }
+
     private fun downloadImageWithCoil(
         imageUrl: String,
-        imageId: String,
+        imageId: Int,
         context: Context
     ) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -85,15 +111,20 @@ class ImagesViewModel @Inject constructor(val repo: ImagesListRepo) : ViewModel(
                     drawable.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     outputStream.flush()
                     outputStream.close()
-                    file.absolutePath
-                } else {
-                    null
+                    localDataBase.imagesProductsDao.insertImages(
+                        ImageModel(
+                            imageId,
+                            file.absolutePath,
+                            ""
+                        )
+                    )
+
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                null
             }
         }
     }
+
 
 }

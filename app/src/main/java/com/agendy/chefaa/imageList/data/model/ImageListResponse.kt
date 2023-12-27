@@ -10,13 +10,13 @@ data class Data(
     val count: Int? = 0,
     val limit: Int? = 0,
     val offset: Int? = 0,
-    val results: List<Result>? = listOf(),
+    val results: List<ImagesResult>? = listOf(),
     val total: Int? = 0
 )
 
 
-data class Result(
-    val id: Int? = 0,
+data class ImagesResult(
+    val id: Int = 0,
     val thumbnail: Thumbnail? = Thumbnail(),
 )
 

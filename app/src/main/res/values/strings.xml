@@ -3,5 +3,6 @@
 
 
     <string name="marvel_api_key">b72936ddcd6fa136c819b8765bc86845</string>
+    <string name="no_caption">No Caption</string>
 
 </resources>
