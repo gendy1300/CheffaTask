@@ -22,7 +22,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import com.agendy.chefaa.imageList.data.model.ImageModel
 import com.agendy.chefaa.imageList.data.offlineStorge.ImagesDataBase
-import com.agendy.chefaa.imageList.domain.repositories.ImagesListRepo
+import com.agendy.chefaa.imagePreview.domain.repository.ResizeRepo
 import com.agendy.chefaa.utils.navigation.AppNavigator
 import com.agendy.chefaa.utils.navigation.screens.HomeScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,7 +36,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ImagePreviewViewModel @Inject constructor(
-    private val repo: ImagesListRepo,
+    private val repo: ResizeRepo,
     private val localDataBase: ImagesDataBase,
     private val savedStateHandle: SavedStateHandle,
     private val appNavigator: AppNavigator
@@ -170,6 +170,11 @@ class ImagePreviewViewModel @Inject constructor(
         })
 
     }
+
+    private fun uploadPhoto(imagePath:String) =
+        viewModelScope.launch {
+
+        }
 
 
     private fun navigateBack() = viewModelScope.launch { appNavigator.navigateBack() }
