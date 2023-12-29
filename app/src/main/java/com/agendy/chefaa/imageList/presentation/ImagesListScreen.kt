@@ -64,16 +64,16 @@ fun ImageListScreen(viewModel: ImagesViewModel = hiltViewModel()) {
      * This was implemented to load the images every time because
      * if a new image is uploaded it will be added to the database
      */
-    imagesState.HandleState(onSuccess = {
-        it.data?.results?.let { results ->
-            viewModel.processIntent(
-                ImagesViewIntent.DownloadImage(
-                    results,
-                    context
-                )
-            )
-        }
-    })
+//    imagesState.HandleState(onSuccess = {
+//        it.data?.results?.let { results ->
+//            viewModel.processIntent(
+//                ImagesViewIntent.DownloadImage(
+//                    results,
+//                    context
+//                )
+//            )
+//        }
+//    })
 
 
     ImagesListComponent(images = offlineImages) { id ->

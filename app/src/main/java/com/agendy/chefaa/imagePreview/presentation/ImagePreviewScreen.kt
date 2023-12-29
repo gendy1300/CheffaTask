@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,14 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.agendy.chefaa.R
 import com.agendy.chefaa.imageList.data.model.ImageModel
 import com.agendy.chefaa.imagePreview.viewmodel.ImagePreviewViewIntents
 import com.agendy.chefaa.imagePreview.viewmodel.ImagePreviewViewModel
+import com.agendy.chefaa.utils.AppButton
 import com.agendy.chefaa.utils.BackIcon
 import com.agendy.chefaa.utils.CustomTextField
+import com.agendy.chefaa.utils.LabelText
 import com.agendy.chefaa.utils.getActivity
 
 @Composable
@@ -52,10 +60,11 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
         }
     }
 
-    ImagePreviewComponent(imageModel, dominantColor) {
-        viewModel.processIntent(ImagePreviewViewIntents.NavigateBack)
-    }
+    ImagePreviewComponent(imageModel, dominantColor, onSubmitClicked = { width: Double, height: Double ->
 
+    }, onBackPresses = {
+        viewModel.processIntent(ImagePreviewViewIntents.NavigateBack)
+    })
 }
 
 
@@ -63,18 +72,31 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
 fun ImagePreviewComponent(
     imageModel: ImageModel,
     dominantColor: Color,
-    onBackPresses: () -> Unit
+    onSubmitClicked:(width:Double,height:Double)->Unit,
+    onBackPresses: () -> Unit,
 ) {
 
     var caption by remember {
         mutableStateOf(imageModel.imageCaption)
     }
 
+    var height by remember {
+        mutableStateOf("0.0")
+    }
+
+    var width by remember {
+        mutableStateOf("0.0")
+    }
+
+    LaunchedEffect(imageModel) {
+        caption = imageModel.imageCaption
+    }
     Column(
         modifier = Modifier
             .background(color = dominantColor)
             .fillMaxSize()
-            .padding(top = 57.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 57.dp, start = 16.dp, end = 16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -91,9 +113,53 @@ fun ImagePreviewComponent(
                 caption = it
 
             }, modifier = Modifier.fillMaxWidth(),
-            isError = caption.contentEquals("No Caption")
+            isError = caption.contentEquals(stringResource(id = R.string.no_caption)),
+            label = {
+                LabelText(stringResource(id = R.string.caption))
+            }
         )
 
+
+
+        CustomTextField(
+            value = height, onValueChange = {
+                try {
+                    val parsedValue = it.toDouble()
+                    height = parsedValue.toString()
+                } catch (_: NumberFormatException) {
+
+                }
+
+
+            }, modifier = Modifier.fillMaxWidth(),
+            label = {
+                LabelText(stringResource(id = R.string.height))
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+
+        CustomTextField(
+            value = width, onValueChange = {
+
+                try {
+                    val parsedValue = it.toDouble()
+                    width = parsedValue.toString()
+                } catch (_: NumberFormatException) {
+
+                }
+
+            }, modifier = Modifier.fillMaxWidth(),
+            label = {
+                LabelText(stringResource(id = R.string.width))
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+
+
+        AppButton(text = stringResource(R.string.submit)){
+            onSubmitClicked(width.toDouble(),height.toDouble())
+        }
 
     }
 }

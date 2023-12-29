@@ -22,18 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.agendy.chefaa.R
 
 
-@Composable
-fun CloseIcon(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Icon(
-        painter = painterResource(id = R.drawable.close_icon),
-        contentDescription = null,
-        modifier = modifier
-            .size(32.dp)
-            .clickable {
-                onClick()
-            }
-    )
-}
 
 
 @Composable

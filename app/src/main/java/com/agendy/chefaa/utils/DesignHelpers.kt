@@ -10,13 +10,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -27,7 +23,6 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -35,6 +30,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agendy.chefaa.R
+import com.agendy.chefaa.utils.theme.Purple40
 import com.agendy.chefaa.utils.theme.poppinsFonts
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -49,14 +45,6 @@ fun Margin(height: Dp = 0.dp, width: Dp = 0.dp) {
             .height(height)
             .width(width)
     )
-}
-
-
-@Composable
-fun AppDivider(isVertical: Boolean = false, color: Color = Color.Gray) {
-
-    Divider(thickness = 1.dp, color = color)
-
 }
 
 
@@ -148,55 +136,62 @@ fun LoadingAnimation() {
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
     singleLine: Boolean = true,
     isEnabled: Boolean = true,
-    label: @Composable() (() -> Unit)? = null,
-    placeholder: @Composable() (() -> Unit)? = null,
-    leadingIcon: @Composable() (() -> Unit)? = null,
-    trailingIcon: @Composable() (() -> Unit)? = null,
-     colors: TextFieldColors = TextFieldDefaults.colors(
-         focusedIndicatorColor = Color.Transparent,
-         unfocusedIndicatorColor = Color.Transparent,
-
-         ),
-    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    label: @Composable (() -> Unit)? = null,
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    backgroundColor: Color = Color.Gray,
+    colors: androidx.compose.material.TextFieldColors = androidx.compose.material.TextFieldDefaults.outlinedTextFieldColors(
+        backgroundColor = backgroundColor,
+        focusedBorderColor = Purple40
+    ),
     textStyle: TextStyle = TextStyle(
         fontSize = 12.sp,
 
         ),
-    backgroundColor: Color = Color.Gray,
+
     shape: RoundedCornerShape = RoundedCornerShape(10.dp),
-    isError:Boolean = false
+    isError: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
 
 
-    TextField(
+    OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
-            .background(
-                shape = shape,
-                color = backgroundColor
-            )
-            .height(44.dp),
-        visualTransformation = visualTransformation,
+            .height(70.dp),
 
         enabled = isEnabled,
         singleLine = singleLine,
         textStyle = textStyle,
-        keyboardOptions = keyboardOptions,
+        colors = colors,
         label = label,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
-        colors = colors
+        isError = isError,
+        shape = shape,
+        keyboardOptions = keyboardOptions
+
+    )
+}
+
+
+@Composable
+fun LabelText(text: String) {
+    TextWithFont(
+        text = text,
+        fontSize = 10.sp,
+        color = Color.Black,
+        fontWeight = FontWeight.Bold
     )
 }
 
