@@ -69,8 +69,6 @@ fun ImageListScreen(viewModel: ImagesViewModel = hiltViewModel()) {
                 )
             )
         }
-
-
     })
 
 
