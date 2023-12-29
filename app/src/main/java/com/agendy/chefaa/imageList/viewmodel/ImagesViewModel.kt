@@ -35,7 +35,7 @@ class ImagesViewModel @Inject constructor(
 
     val imagesResponse: State<ViewState<ImageListResponse>> = _imagesResponse
 
-    val images: Flow<List<ImageModel>?> = localDataBase.imagesProductsDao.getImages()
+    val images: Flow<List<ImageModel>?> = localDataBase.imagesDao.getImages()
 
 
     fun processIntent(intent: ImagesViewIntent) {
@@ -75,7 +75,7 @@ class ImagesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             items.forEach { result ->
 
-                if (!localDataBase.imagesProductsDao.getImageWithId(result.id).isNullOrEmpty()) {
+                if (localDataBase.imagesDao.getImageWithId(result.id).isNullOrEmpty()) {
                     val image = result.thumbnail
                     downloadImageWithCoil(
                         imageUrl = "${image?.path}.${image?.extension}",
@@ -111,11 +111,11 @@ class ImagesViewModel @Inject constructor(
                     drawable.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     outputStream.flush()
                     outputStream.close()
-                    localDataBase.imagesProductsDao.insertImages(
+                    localDataBase.imagesDao.insertImages(
                         ImageModel(
                             imageId,
                             file.absolutePath,
-                            ""
+                            "No Caption"
                         )
                     )
 

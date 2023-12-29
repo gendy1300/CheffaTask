@@ -8,7 +8,7 @@ import com.agendy.chefaa.imageList.data.model.ImageModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ImagesProductsDao {
+interface ImagesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertImages(vararg image: ImageModel)
 
