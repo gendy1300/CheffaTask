@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -79,6 +80,7 @@ fun TextWithFont(
     textAlign: TextAlign? = null,
     lineHeight: TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,
+    overflow :TextOverflow = TextOverflow.Clip
 ) {
     Text(
         text = text,
@@ -90,7 +92,8 @@ fun TextWithFont(
         color = color,
         textAlign = textAlign,
         letterSpacing = letterSpacing,
-        lineHeight = lineHeight
+        lineHeight = lineHeight,
+        overflow = overflow,
     )
 
 }
