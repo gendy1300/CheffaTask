@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ImagesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertImages(vararg image: ImageModel)
+    fun insertImages(image: ImageModel): Long
 
     @Query("SELECT * FROM imagemodel")
     fun getImages(): Flow<List<ImageModel>?>

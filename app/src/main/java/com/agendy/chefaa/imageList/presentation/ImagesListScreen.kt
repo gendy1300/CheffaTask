@@ -76,7 +76,9 @@ fun ImageListScreen(viewModel: ImagesViewModel = hiltViewModel()) {
     })
 
 
-    ImagesListComponent(images = offlineImages)
+    ImagesListComponent(images = offlineImages) { id ->
+        viewModel.processIntent(ImagesViewIntent.NavigateToImagePreview(id))
+    }
 
 }
 
@@ -86,7 +88,7 @@ fun ImageListScreen(viewModel: ImagesViewModel = hiltViewModel()) {
  * a feeling of the aspect ratio of the image
  */
 @Composable
-fun ImagesListComponent(images: List<ImageModel>?) {
+fun ImagesListComponent(images: List<ImageModel>?, onImageClicked: (id: Int) -> Unit) {
 
     Column(
         modifier = Modifier
@@ -119,7 +121,7 @@ fun ImagesListComponent(images: List<ImageModel>?) {
                 items(it, key = { item ->
                     item.id
                 }) { item ->
-                    ImageItem(item)
+                    ImageItem(item, onImageClicked)
                 }
             }
 
@@ -136,9 +138,11 @@ fun ImagesListComponent(images: List<ImageModel>?) {
  * the content scale wasn't set
  */
 @Composable
-fun ImageItem(item: ImageModel) {
+fun ImageItem(item: ImageModel, onImageClicked: (id: Int) -> Unit) {
 
-    Column {
+    Column(Modifier.clickable {
+        onImageClicked(item.id)
+    }) {
         AsyncImage(
             model = item.imagePath,
             contentDescription = null,

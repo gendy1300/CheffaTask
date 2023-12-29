@@ -2,28 +2,24 @@ package com.agendy.chefaa.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,7 +76,7 @@ fun TextWithFont(
     textAlign: TextAlign? = null,
     lineHeight: TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,
-    overflow :TextOverflow = TextOverflow.Clip
+    overflow: TextOverflow = TextOverflow.Clip
 ) {
     Text(
         text = text,
@@ -152,7 +148,6 @@ fun LoadingAnimation() {
 }
 
 
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CustomTextField(
@@ -166,24 +161,23 @@ fun CustomTextField(
     placeholder: @Composable() (() -> Unit)? = null,
     leadingIcon: @Composable() (() -> Unit)? = null,
     trailingIcon: @Composable() (() -> Unit)? = null,
-    colors: TextFieldColors = TextFieldDefaults.textFieldColors(
-        backgroundColor = Color.Gray,
-        focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
+     colors: TextFieldColors = TextFieldDefaults.colors(
+         focusedIndicatorColor = Color.Transparent,
+         unfocusedIndicatorColor = Color.Transparent,
 
-        ),
+         ),
     keyboardOptions: KeyboardOptions = KeyboardOptions(),
     textStyle: TextStyle = TextStyle(
         fontSize = 12.sp,
 
         ),
     backgroundColor: Color = Color.Gray,
-    shape: RoundedCornerShape = RoundedCornerShape(10.dp)
+    shape: RoundedCornerShape = RoundedCornerShape(10.dp),
+    isError:Boolean = false
 ) {
 
-    val interactionSource = remember { MutableInteractionSource() }
 
-    BasicTextField(
+    TextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
@@ -193,29 +187,17 @@ fun CustomTextField(
             )
             .height(44.dp),
         visualTransformation = visualTransformation,
-        interactionSource = interactionSource,
+
         enabled = isEnabled,
         singleLine = singleLine,
         textStyle = textStyle,
-        keyboardOptions = keyboardOptions
-    ) { innerTextField ->
-
-        TextFieldDefaults.TextFieldDecorationBox(
-            value = value,
-            visualTransformation = visualTransformation,
-            innerTextField = innerTextField,
-            singleLine = singleLine,
-            enabled = isEnabled,
-            interactionSource = interactionSource,
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 13.dp),
-            label = label,
-            trailingIcon = trailingIcon,
-            placeholder = placeholder,
-            leadingIcon = leadingIcon,
-            colors = colors,
-
-            )
-    }
+        keyboardOptions = keyboardOptions,
+        label = label,
+        placeholder = placeholder,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        colors = colors
+    )
 }
 
 

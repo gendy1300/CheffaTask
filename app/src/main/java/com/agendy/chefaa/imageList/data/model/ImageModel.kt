@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class ImageModel(
-    @PrimaryKey val id: Int,
-    val imagePath: String,
-    val imageCaption: String
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val imagePath: String = "",
+    val imageCaption: String = ""
 )

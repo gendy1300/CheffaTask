@@ -45,7 +45,8 @@ fun BackIcon(modifier: Modifier = Modifier, onClick: () -> Unit) {
             .size(32.dp)
             .clickable {
                 onClick()
-            }
+            },
+
     )
 }
 

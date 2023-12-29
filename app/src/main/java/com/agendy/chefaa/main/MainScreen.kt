@@ -29,8 +29,6 @@ fun MainScreen(
 
 
 
-
-
     NavigationEffects(
         navigationChannel = mainViewModel.navigationChannel, navHostController = navController
     )

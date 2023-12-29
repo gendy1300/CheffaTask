@@ -53,6 +53,7 @@ android {
 
 dependencies {
 
+
     val composeBomVersion = "2023.10.01"
     val coilVersion = "2.5.0"
     val navVersion = "2.7.5"
@@ -66,7 +67,7 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-
+    implementation("androidx.palette:palette-ktx:1.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

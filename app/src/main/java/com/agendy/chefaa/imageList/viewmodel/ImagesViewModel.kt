@@ -15,6 +15,8 @@ import com.agendy.chefaa.imageList.data.model.ImageModel
 import com.agendy.chefaa.imageList.data.model.ImagesResult
 import com.agendy.chefaa.imageList.data.offlineStorge.ImagesDataBase
 import com.agendy.chefaa.imageList.domain.repositories.ImagesListRepo
+import com.agendy.chefaa.utils.navigation.AppNavigator
+import com.agendy.chefaa.utils.navigation.screens.HomeScreens
 import com.agendy.chefaa.utils.retrofit.ViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ImagesViewModel @Inject constructor(
     private val repo: ImagesListRepo,
-    private val localDataBase: ImagesDataBase
+    private val localDataBase: ImagesDataBase,
+    private val appNavigator: AppNavigator
 ) : ViewModel() {
 
     private val _imagesResponse =
@@ -52,6 +55,8 @@ class ImagesViewModel @Inject constructor(
                 items = intent.images,
                 context = intent.context
             )
+
+            is ImagesViewIntent.NavigateToImagePreview -> navigateToImagePreview(intent.id)
         }
     }
 
@@ -126,5 +131,9 @@ class ImagesViewModel @Inject constructor(
         }
     }
 
+
+    private fun navigateToImagePreview(imageId: Int) = viewModelScope.launch {
+        appNavigator.navigateTo(HomeScreens.ResizeScreen(imageId))
+    }
 
 }

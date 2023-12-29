@@ -1,8 +1,10 @@
 package com.agendy.chefaa.utils
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.time.LocalTime
@@ -18,7 +20,7 @@ fun logDebug(message: String, tag: String = "Chefaa") {
 }
 
 
- fun generateMarvelHash(): String {
+fun generateMarvelHash(): String {
     val privateKey = "4711bb7cc52825d3c4f31d4b8cf759898036d363"
     val publicKey = "b72936ddcd6fa136c819b8765bc86845"
     val input = getCurrentHourUsingLocalTime() + privateKey + publicKey
@@ -30,4 +32,11 @@ fun logDebug(message: String, tag: String = "Chefaa") {
 fun getCurrentHourUsingLocalTime(): String {
     val currentTime = LocalTime.now()
     return currentTime.hour.toString()
+}
+
+
+fun Context.getActivity(): ComponentActivity? = when (this) {
+    is ComponentActivity -> this
+    is ContextWrapper -> baseContext.getActivity()
+    else -> null
 }
