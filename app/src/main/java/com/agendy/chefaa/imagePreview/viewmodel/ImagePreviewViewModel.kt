@@ -184,7 +184,7 @@ class ImagePreviewViewModel @Inject constructor(
 
     }
 
-    private fun startWorker(imageId: Int, context: Context, width: Double, height: Double) {
+    private fun startWorker(imageId: Int, context: Context, width: Int, height: Int) {
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)

@@ -63,7 +63,7 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
     ImagePreviewComponent(
         imageModel,
         dominantColor,
-        onSubmitClicked = { width: Double, height: Double ->
+        onSubmitClicked = { width: Int, height: Int ->
             viewModel.processIntent(
                 ImagePreviewViewIntents.StartWorker(
                     context = context,
@@ -83,7 +83,7 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
 fun ImagePreviewComponent(
     imageModel: ImageModel,
     dominantColor: Color,
-    onSubmitClicked: (width: Double, height: Double) -> Unit,
+    onSubmitClicked: (width: Int, height: Int) -> Unit,
     onBackPresses: () -> Unit,
 ) {
 
@@ -92,11 +92,11 @@ fun ImagePreviewComponent(
     }
 
     var height by remember {
-        mutableStateOf("0.0")
+        mutableStateOf("0")
     }
 
     var width by remember {
-        mutableStateOf("0.0")
+        mutableStateOf("0")
     }
 
     LaunchedEffect(imageModel) {
@@ -135,7 +135,7 @@ fun ImagePreviewComponent(
         CustomTextField(
             value = height, onValueChange = {
                 try {
-                    val parsedValue = it.toDouble()
+                    val parsedValue = it.toInt()
                     height = parsedValue.toString()
                 } catch (_: NumberFormatException) {
 
@@ -154,7 +154,7 @@ fun ImagePreviewComponent(
             value = width, onValueChange = {
 
                 try {
-                    val parsedValue = it.toDouble()
+                    val parsedValue = it.toInt()
                     width = parsedValue.toString()
                 } catch (_: NumberFormatException) {
 
@@ -169,7 +169,7 @@ fun ImagePreviewComponent(
 
 
         AppButton(text = stringResource(R.string.submit)) {
-            onSubmitClicked(width.toDouble(), height.toDouble())
+            onSubmitClicked(width.toInt(), height.toInt())
         }
 
     }

@@ -19,8 +19,8 @@ sealed class ImagePreviewViewIntents {
     data class StartWorker(
         val context: Context,
         val imageId: Int,
-        val height: Double,
-        val width: Double
+        val height: Int,
+        val width: Int
     ) : ImagePreviewViewIntents()
 
     companion object {

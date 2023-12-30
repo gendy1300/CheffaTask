@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.agendy.chefaa.imageList.data.model.ImageModel
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +22,6 @@ interface ImagesDao {
     @Query("UPDATE ImageModel SET imageCaption = :caption WHERE id = :id")
     suspend fun updateImageCaption(id: Int, caption: String)
 
+    @Update
+    suspend fun updateImage(image: ImageModel): Int
 }

@@ -1,16 +1,31 @@
 package com.agendy.chefaa.imagePreview.data.remote
 
-import com.agendy.chefaa.imageList.data.model.ImageListResponse
-import okhttp3.MultipartBody
-import retrofit2.http.Headers
-import retrofit2.http.Multipart
+import com.agendy.chefaa.imagePreview.data.models.ResizeRequest
+import com.agendy.chefaa.imagePreview.data.models.ShrinkResponse
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.POST
-import retrofit2.http.Part
+import retrofit2.http.Streaming
+import retrofit2.http.Url
 
 interface ResizeApis {
 
-    @Multipart
     @POST("shrink")
-    @Headers("Content-Type: image/jpeg", "Authorization: Basic ynwbcWf4TTTZqMy3xr9GwvkTh4nrrFST")
-    suspend fun shrinkImage(@Part file: MultipartBody.Part): ImageListResponse
+    @Streaming
+    suspend fun shrinkImage(
+        @Header("Authorization") auth: String,
+        @Body imageBytes: RequestBody,
+        @Header("Content-Type") contentType: String,
+    ): ShrinkResponse
+
+
+    @POST
+    suspend fun resizeImage(
+        @Url url: String,
+        @Header("Authorization") auth: String,
+        @Body resizeBody: ResizeRequest
+    ): Response<ResponseBody>
 }

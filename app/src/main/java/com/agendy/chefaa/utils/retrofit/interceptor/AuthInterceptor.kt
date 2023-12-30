@@ -20,7 +20,7 @@ class AuthInterceptor(private val token: String?) : Interceptor {
 
         val builder: Request.Builder = chain.request().newBuilder().url(request)
 
-        builder.addHeader("Accept", "application/json")
+//        builder.addHeader("Accept", "application/json")
 
         builder.build()
 
