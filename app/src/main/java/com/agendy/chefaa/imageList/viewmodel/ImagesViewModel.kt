@@ -120,7 +120,10 @@ class ImagesViewModel @Inject constructor(
                         ImageModel(
                             imageId,
                             file.absolutePath,
-                            "No Caption"
+                            "No Caption",
+                            width = drawable.width,
+                            height = drawable.height
+
                         )
                     )
 

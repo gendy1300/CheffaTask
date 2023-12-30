@@ -63,13 +63,17 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
     ImagePreviewComponent(
         imageModel,
         dominantColor,
-        onSubmitClicked = { width: Int, height: Int ->
+        onSubmitClicked = { width: Int, height: Int, caption ->
+
+
             viewModel.processIntent(
                 ImagePreviewViewIntents.StartWorker(
                     context = context,
                     imageId = imageModel.id,
                     width = width,
-                    height = height
+                    height = height,
+                    caption = caption,
+                    isCaptionOnly = width == imageModel.width && height == imageModel.height
                 )
             )
         },
@@ -83,7 +87,7 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
 fun ImagePreviewComponent(
     imageModel: ImageModel,
     dominantColor: Color,
-    onSubmitClicked: (width: Int, height: Int) -> Unit,
+    onSubmitClicked: (width: Int, height: Int, caption: String) -> Unit,
     onBackPresses: () -> Unit,
 ) {
 
@@ -92,15 +96,17 @@ fun ImagePreviewComponent(
     }
 
     var height by remember {
-        mutableStateOf("0")
+        mutableStateOf(imageModel.height.toString())
     }
 
     var width by remember {
-        mutableStateOf("0")
+        mutableStateOf(imageModel.width.toString())
     }
 
     LaunchedEffect(imageModel) {
         caption = imageModel.imageCaption
+        height = imageModel.height.toString()
+        width = imageModel.width.toString()
     }
     Column(
         modifier = Modifier
@@ -135,8 +141,14 @@ fun ImagePreviewComponent(
         CustomTextField(
             value = height, onValueChange = {
                 try {
-                    val parsedValue = it.toInt()
-                    height = parsedValue.toString()
+                    height = if (it.isBlank())
+                        "0"
+                    else {
+                        if (height == "0")
+                            it.dropLast(1).toInt().toString()
+                        else
+                            it.toInt().toString()
+                    }
                 } catch (_: NumberFormatException) {
 
                 }
@@ -154,12 +166,17 @@ fun ImagePreviewComponent(
             value = width, onValueChange = {
 
                 try {
-                    val parsedValue = it.toInt()
-                    width = parsedValue.toString()
+                    width = if (it.isBlank())
+                        "0"
+                    else {
+                        if (width == "0")
+                            it.dropLast(1).toInt().toString()
+                        else
+                            it.toInt().toString()
+                    }
                 } catch (_: NumberFormatException) {
 
                 }
-
             }, modifier = Modifier.fillMaxWidth(),
             label = {
                 LabelText(stringResource(id = R.string.width))
@@ -169,7 +186,7 @@ fun ImagePreviewComponent(
 
 
         AppButton(text = stringResource(R.string.submit)) {
-            onSubmitClicked(width.toInt(), height.toInt())
+            onSubmitClicked(width.toInt(), height.toInt(), caption)
         }
 
     }

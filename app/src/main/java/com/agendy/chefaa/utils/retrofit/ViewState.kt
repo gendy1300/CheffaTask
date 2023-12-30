@@ -61,5 +61,23 @@ fun <T> ViewState<T>.HandleState(
         ViewState.NotCalled -> {}
 
     }
+
+
+
+}
+
+
+fun <T> ViewState<T>.shouldCallApi(): Boolean {
+    return when (this) {
+        is ViewState.Error -> {
+            true
+        }
+
+        ViewState.Loading -> false
+        ViewState.NoInternetConnection -> true
+        ViewState.NotCalled -> true
+        is ViewState.Success -> false
+    }
+
 }
 

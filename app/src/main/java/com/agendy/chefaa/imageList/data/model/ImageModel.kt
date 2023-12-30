@@ -7,5 +7,7 @@ import androidx.room.PrimaryKey
 data class ImageModel(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val imagePath: String = "",
-    val imageCaption: String = ""
+    val imageCaption: String = "",
+    val width:Int = 0,
+    val height:Int = 0
 )

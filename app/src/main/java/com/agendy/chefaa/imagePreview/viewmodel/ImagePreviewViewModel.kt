@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import androidx.work.Constraints
-import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -64,12 +63,13 @@ class ImagePreviewViewModel @Inject constructor(
             )
 
 
-
             is ImagePreviewViewIntents.StartWorker -> startWorker(
                 imageId = intent.imageId,
                 context = intent.context,
                 width = intent.width,
-                height = intent.height
+                height = intent.height,
+                caption = intent.caption,
+                isCaptionOnly = intent.isCaptionOnly
             )
         }
     }
@@ -184,7 +184,14 @@ class ImagePreviewViewModel @Inject constructor(
 
     }
 
-    private fun startWorker(imageId: Int, context: Context, width: Int, height: Int) {
+    private fun startWorker(
+        imageId: Int,
+        context: Context,
+        width: Int,
+        height: Int,
+        caption: String,
+        isCaptionOnly: Boolean
+    ) {
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -193,17 +200,22 @@ class ImagePreviewViewModel @Inject constructor(
         val inputData = workDataOf(
             ImagePreviewViewIntents.ID_KEY to imageId,
             ImagePreviewViewIntents.WIDTH_KEY to width,
-            ImagePreviewViewIntents.HEIGHT_KEY to height
+            ImagePreviewViewIntents.HEIGHT_KEY to height,
+            ImagePreviewViewIntents.CAPTION_KEY to caption,
+            ImagePreviewViewIntents.IS_CAPTION_ONLY_KEY to isCaptionOnly
         )
 
         val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadPhotoOneTimeWork>()
-            .setConstraints(constraints)
             .setInputData(inputData)
-            .build()
 
-        WorkManager.getInstance(context).enqueue(uploadWorkRequest)
+
+        if (!isCaptionOnly)
+            uploadWorkRequest.setConstraints(constraints)
+
+        WorkManager.getInstance(context).enqueue(uploadWorkRequest.build())
+
+        navigateBack()
     }
-
 
 
     private fun navigateBack() = viewModelScope.launch { appNavigator.navigateBack() }

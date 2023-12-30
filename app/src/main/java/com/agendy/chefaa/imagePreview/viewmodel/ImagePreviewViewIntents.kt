@@ -20,13 +20,17 @@ sealed class ImagePreviewViewIntents {
         val context: Context,
         val imageId: Int,
         val height: Int,
-        val width: Int
+        val width: Int,
+        val caption:String,
+        val isCaptionOnly:Boolean
     ) : ImagePreviewViewIntents()
 
     companion object {
         const val ID_KEY = "imageId"
         const val HEIGHT_KEY = "imageHeight"
         const val WIDTH_KEY = "imageWidth"
+        const val IS_CAPTION_ONLY_KEY = "isCaptionOnly"
+        const val CAPTION_KEY = "captionKey"
     }
 
 }
