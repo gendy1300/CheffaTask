@@ -15,4 +15,18 @@ sealed class ImagePreviewViewIntents {
 
     data object NavigateBack : ImagePreviewViewIntents()
 
+
+    data class StartWorker(
+        val context: Context,
+        val imageId: Int,
+        val height: Double,
+        val width: Double
+    ) : ImagePreviewViewIntents()
+
+    companion object {
+        const val ID_KEY = "imageId"
+        const val HEIGHT_KEY = "imageHeight"
+        const val WIDTH_KEY = "imageWidth"
+    }
+
 }

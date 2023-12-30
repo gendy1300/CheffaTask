@@ -20,9 +20,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.agendy.chefaa.imageList.data.model.ImageModel
 import com.agendy.chefaa.imageList.data.offlineStorge.ImagesDataBase
 import com.agendy.chefaa.imagePreview.domain.repository.ResizeRepo
+import com.agendy.chefaa.utils.UploadPhotoOneTimeWork
 import com.agendy.chefaa.utils.navigation.AppNavigator
 import com.agendy.chefaa.utils.navigation.screens.HomeScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,17 +54,23 @@ class ImagePreviewViewModel @Inject constructor(
     var dominantColor = mutableStateOf(Color.Black)
     fun processIntent(intent: ImagePreviewViewIntents) {
         when (intent) {
-            ImagePreviewViewIntents.NavigateBack -> {
-                navigateBack()
-            }
+            ImagePreviewViewIntents.NavigateBack -> navigateBack()
 
-            is ImagePreviewViewIntents.GetImage -> {
-                getCurrentImageModel(
-                    currentActivity = intent.currentActivity,
-                    lifecycleOwner = intent.lifecycleOwner,
-                    context = intent.context
-                )
-            }
+
+            is ImagePreviewViewIntents.GetImage -> getCurrentImageModel(
+                currentActivity = intent.currentActivity,
+                lifecycleOwner = intent.lifecycleOwner,
+                context = intent.context
+            )
+
+
+
+            is ImagePreviewViewIntents.StartWorker -> startWorker(
+                imageId = intent.imageId,
+                context = intent.context,
+                width = intent.width,
+                height = intent.height
+            )
         }
     }
 
@@ -171,10 +184,26 @@ class ImagePreviewViewModel @Inject constructor(
 
     }
 
-    private fun uploadPhoto(imagePath:String) =
-        viewModelScope.launch {
+    private fun startWorker(imageId: Int, context: Context, width: Double, height: Double) {
 
-        }
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val inputData = workDataOf(
+            ImagePreviewViewIntents.ID_KEY to imageId,
+            ImagePreviewViewIntents.WIDTH_KEY to width,
+            ImagePreviewViewIntents.HEIGHT_KEY to height
+        )
+
+        val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadPhotoOneTimeWork>()
+            .setConstraints(constraints)
+            .setInputData(inputData)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(uploadWorkRequest)
+    }
+
 
 
     private fun navigateBack() = viewModelScope.launch { appNavigator.navigateBack() }

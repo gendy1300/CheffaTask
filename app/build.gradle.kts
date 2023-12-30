@@ -54,6 +54,7 @@ android {
 dependencies {
 
 
+
     val composeBomVersion = "2023.10.01"
     val coilVersion = "2.5.0"
     val navVersion = "2.7.5"
@@ -63,6 +64,8 @@ dependencies {
     val accompanistVersion = "0.32.0"
     val splashScreenVersion = "1.0.1"
     val lottieVersion = "6.2.0"
+    val hiltWorkMangerVersion = "1.1.0"
+    val WorkMangerVersion = "2.9.0"
 
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -102,6 +105,15 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     ksp("com.google.dagger:hilt-compiler:$daggerHiltVersion")
 
+    //Hilt WorkManger
+    implementation("androidx.hilt:hilt-work:$hiltWorkMangerVersion")
+    ksp("androidx.hilt:hilt-compiler:$hiltWorkMangerVersion")
+
+
+    //WorkManger
+    implementation("androidx.work:work-runtime-ktx:$WorkMangerVersion")
+
+
     // Room
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
@@ -125,6 +137,8 @@ dependencies {
 
     //LottieAnimations
     implementation("com.airbnb.android:lottie-compose:$lottieVersion")
+
+
 
 
 

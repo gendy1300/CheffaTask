@@ -60,11 +60,22 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
         }
     }
 
-    ImagePreviewComponent(imageModel, dominantColor, onSubmitClicked = { width: Double, height: Double ->
-
-    }, onBackPresses = {
-        viewModel.processIntent(ImagePreviewViewIntents.NavigateBack)
-    })
+    ImagePreviewComponent(
+        imageModel,
+        dominantColor,
+        onSubmitClicked = { width: Double, height: Double ->
+            viewModel.processIntent(
+                ImagePreviewViewIntents.StartWorker(
+                    context = context,
+                    imageId = imageModel.id,
+                    width = width,
+                    height = height
+                )
+            )
+        },
+        onBackPresses = {
+            viewModel.processIntent(ImagePreviewViewIntents.NavigateBack)
+        })
 }
 
 
@@ -72,7 +83,7 @@ fun ImagePreviewScreen(viewModel: ImagePreviewViewModel = hiltViewModel()) {
 fun ImagePreviewComponent(
     imageModel: ImageModel,
     dominantColor: Color,
-    onSubmitClicked:(width:Double,height:Double)->Unit,
+    onSubmitClicked: (width: Double, height: Double) -> Unit,
     onBackPresses: () -> Unit,
 ) {
 
@@ -157,8 +168,8 @@ fun ImagePreviewComponent(
         )
 
 
-        AppButton(text = stringResource(R.string.submit)){
-            onSubmitClicked(width.toDouble(),height.toDouble())
+        AppButton(text = stringResource(R.string.submit)) {
+            onSubmitClicked(width.toDouble(), height.toDouble())
         }
 
     }
