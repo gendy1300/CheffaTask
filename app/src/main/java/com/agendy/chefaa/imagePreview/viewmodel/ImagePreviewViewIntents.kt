@@ -31,6 +31,7 @@ sealed class ImagePreviewViewIntents {
         const val WIDTH_KEY = "imageWidth"
         const val IS_CAPTION_ONLY_KEY = "isCaptionOnly"
         const val CAPTION_KEY = "captionKey"
+        const val WORKER_TAG_KEY = "IMAGE_UPLOAD"
     }
 
 }

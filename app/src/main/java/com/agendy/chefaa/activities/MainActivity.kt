@@ -36,6 +36,10 @@ class MainActivity : ComponentActivity() {
             Manifest.permission.POST_NOTIFICATIONS
         )
 
+
+
+
+
         setContent {
             ChefaaTheme {
                 MainScreen()

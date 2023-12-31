@@ -16,6 +16,7 @@ import com.agendy.chefaa.imagePreview.domain.repository.ResizeRepo
 import com.agendy.chefaa.imagePreview.viewmodel.ImagePreviewViewIntents
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -29,6 +30,9 @@ class UploadPhotoOneTimeWork @AssistedInject constructor(
     private val resizeRepo: ResizeRepo
 ) : CoroutineWorker(appContext, workerParams) {
 
+    companion object {
+        const val Progress = "Progress"
+    }
     override suspend fun doWork(): Result {
 
         val inputData = inputData
@@ -65,12 +69,13 @@ class UploadPhotoOneTimeWork @AssistedInject constructor(
 
 
             imageModel?.imagePath?.let {
-                val response = resizeRepo.uploadImageToTinyPng(it) { progress ->
+                val response = resizeRepo.uploadImageToTinyPng(it) { uploadProgressProgress ->
 
-                    setProgressAsync(workDataOf("progress" to progress))
 
-                    notificationBuilder.setProgress(100, progress, false)
-                        .setContentText("Progress: $progress%")
+                    setProgressAsync(workDataOf(Progress to uploadProgressProgress))
+
+                    notificationBuilder.setProgress(100, uploadProgressProgress, false)
+                        .setContentText("Progress: $uploadProgressProgress%")
                     notificationManager.notify(imageId, notificationBuilder.build())
 
                 }
@@ -138,4 +143,5 @@ class UploadPhotoOneTimeWork @AssistedInject constructor(
             localDataBase.imagesDao.updateImage(imageModel)
         }
     }
+
 }

@@ -1,15 +1,12 @@
 package com.agendy.chefaa.imagePreview.viewmodel
 
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
-import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -29,6 +26,7 @@ import com.agendy.chefaa.imageList.data.model.ImageModel
 import com.agendy.chefaa.imageList.data.offlineStorge.ImagesDataBase
 import com.agendy.chefaa.imagePreview.domain.repository.ResizeRepo
 import com.agendy.chefaa.utils.UploadPhotoOneTimeWork
+import com.agendy.chefaa.utils.getImageName
 import com.agendy.chefaa.utils.navigation.AppNavigator
 import com.agendy.chefaa.utils.navigation.screens.HomeScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -108,21 +106,6 @@ class ImagePreviewViewModel @Inject constructor(
     }
 
 
-    private fun getImageName(contentResolver: ContentResolver, imageUri: Uri): String? {
-        var imageName: String? = null
-        val projection = arrayOf(MediaStore.Images.Media.DISPLAY_NAME)
-        val cursor: Cursor? = contentResolver.query(imageUri, projection, null, null, null)
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val columnIndex: Int =
-                    it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-                imageName = it.getString(columnIndex)
-            }
-        }
-        return imageName
-    }
-
-
     private fun extractDominantColorFromFilePath(filePath: String) {
         val file = File(filePath)
         if (file.exists()) {
@@ -162,6 +145,7 @@ class ImagePreviewViewModel @Inject constructor(
                                     imageModel.value = image
                                     extractDominantColorFromFilePath(image.imagePath)
                                 }
+                            currentActivity.intent?.removeExtra(Intent.EXTRA_STREAM)
                         }
                     }
 
@@ -207,7 +191,7 @@ class ImagePreviewViewModel @Inject constructor(
 
         val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadPhotoOneTimeWork>()
             .setInputData(inputData)
-
+            .addTag(ImagePreviewViewIntents.WORKER_TAG_KEY)
 
         if (!isCaptionOnly)
             uploadWorkRequest.setConstraints(constraints)

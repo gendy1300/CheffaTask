@@ -1,7 +1,11 @@
 package com.agendy.chefaa.utils
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
+import android.database.Cursor
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -39,4 +43,19 @@ fun Context.getActivity(): ComponentActivity? = when (this) {
     is ComponentActivity -> this
     is ContextWrapper -> baseContext.getActivity()
     else -> null
+}
+
+
+ fun getImageName(contentResolver: ContentResolver, imageUri: Uri): String? {
+    var imageName: String? = null
+    val projection = arrayOf(MediaStore.Images.Media.DISPLAY_NAME)
+    val cursor: Cursor? = contentResolver.query(imageUri, projection, null, null, null)
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val columnIndex: Int =
+                it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            imageName = it.getString(columnIndex)
+        }
+    }
+    return imageName
 }
