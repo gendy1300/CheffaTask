@@ -69,6 +69,7 @@ class ImagePreviewViewModel @Inject constructor(
                 caption = intent.caption,
                 isCaptionOnly = intent.isCaptionOnly
             )
+
         }
     }
 
@@ -204,3 +205,4 @@ class ImagePreviewViewModel @Inject constructor(
 
     private fun navigateBack() = viewModelScope.launch { appNavigator.navigateBack() }
 }
+

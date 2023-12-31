@@ -8,5 +8,6 @@
     <string name="height">Height</string>
     <string name="width">Width</string>
     <string name="submit">Submit</string>
+    <string name="save_image">Save Image</string>
 
 </resources>

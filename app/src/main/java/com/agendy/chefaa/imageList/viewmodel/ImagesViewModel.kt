@@ -1,9 +1,11 @@
 package com.agendy.chefaa.imageList.viewmodel
 
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Environment
+import android.provider.MediaStore
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -23,7 +25,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,6 +61,10 @@ class ImagesViewModel @Inject constructor(
             )
 
             is ImagesViewIntent.NavigateToImagePreview -> navigateToImagePreview(intent.id)
+            is ImagesViewIntent.SaveImage -> saveImageToGallery(
+                context = intent.context,
+                imageId = intent.id
+            )
         }
     }
 
@@ -138,5 +146,36 @@ class ImagesViewModel @Inject constructor(
     private fun navigateToImagePreview(imageId: Int) = viewModelScope.launch {
         appNavigator.navigateTo(HomeScreens.ResizeScreen(imageId))
     }
+
+
+    private fun saveImageToGallery(context: Context, imageId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val imageModel = localDataBase.imagesDao.getImageWithId(imageId)?.firstOrNull()
+
+            imageModel?.let {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, imageModel.id)
+                    put(MediaStore.Images.Media.DESCRIPTION, imageModel.imageCaption)
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                }
+
+                val contentResolver = context.contentResolver
+                try {
+                    val imagesCollection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    val imageUri = contentResolver.insert(imagesCollection, contentValues)
+                    if (imageUri != null) {
+                        val inputStream = FileInputStream(File(imageModel.imagePath))
+                        val outputStream = contentResolver.openOutputStream(imageUri)
+                        outputStream?.use { input -> inputStream.copyTo(outputStream) }
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+
+        }
+    }
+
 
 }

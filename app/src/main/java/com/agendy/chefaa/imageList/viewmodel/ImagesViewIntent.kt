@@ -13,4 +13,6 @@ sealed class ImagesViewIntent {
 
     data class NavigateToImagePreview(val id: Int) : ImagesViewIntent()
 
+    data class SaveImage(val id: Int,val context: Context) : ImagesViewIntent()
+
 }

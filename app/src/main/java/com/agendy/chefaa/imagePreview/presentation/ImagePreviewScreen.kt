@@ -88,7 +88,7 @@ fun ImagePreviewComponent(
     imageModel: ImageModel,
     dominantColor: Color,
     onSubmitClicked: (width: Int, height: Int, caption: String) -> Unit,
-    onBackPresses: () -> Unit,
+    onBackPresses: () -> Unit
 ) {
 
     var caption by remember {

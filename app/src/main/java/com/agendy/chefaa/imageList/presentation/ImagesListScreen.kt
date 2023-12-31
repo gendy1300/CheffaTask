@@ -3,6 +3,7 @@ package com.agendy.chefaa.imageList.presentation
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,8 +17,10 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -31,13 +34,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.agendy.chefaa.R
 import com.agendy.chefaa.imageList.data.model.ImageModel
 import com.agendy.chefaa.imageList.viewmodel.ImagesViewIntent
 import com.agendy.chefaa.imageList.viewmodel.ImagesViewModel
@@ -78,9 +84,11 @@ fun ImageListScreen(viewModel: ImagesViewModel = hiltViewModel()) {
     })
 
 
-    ImagesListComponent(images = offlineImages) { id ->
+    ImagesListComponent(images = offlineImages, onImageClicked = { id ->
         viewModel.processIntent(ImagesViewIntent.NavigateToImagePreview(id))
-    }
+    }, onSave = { id ->
+        viewModel.processIntent(ImagesViewIntent.SaveImage(id, context))
+    })
 
 }
 
@@ -90,7 +98,11 @@ fun ImageListScreen(viewModel: ImagesViewModel = hiltViewModel()) {
  * a feeling of the aspect ratio of the image
  */
 @Composable
-fun ImagesListComponent(images: List<ImageModel>?, onImageClicked: (id: Int) -> Unit) {
+fun ImagesListComponent(
+    images: List<ImageModel>?,
+    onImageClicked: (id: Int) -> Unit,
+    onSave: (imageId: Int) -> Unit
+) {
 
     Column(
         modifier = Modifier
@@ -123,7 +135,7 @@ fun ImagesListComponent(images: List<ImageModel>?, onImageClicked: (id: Int) -> 
                 items(it, key = { item ->
                     item.id
                 }) { item ->
-                    ImageItem(item, onImageClicked)
+                    ImageItem(item, onImageClicked, onSave = onSave)
                 }
             }
 
@@ -140,11 +152,21 @@ fun ImagesListComponent(images: List<ImageModel>?, onImageClicked: (id: Int) -> 
  * the content scale wasn't set
  */
 @Composable
-fun ImageItem(item: ImageModel, onImageClicked: (id: Int) -> Unit) {
+fun ImageItem(item: ImageModel, onImageClicked: (id: Int) -> Unit, onSave: (imageId: Int) -> Unit) {
 
-    Column(Modifier.clickable {
-        onImageClicked(item.id)
-    }) {
+    var isMenuVisible by remember { mutableStateOf(false) }
+    Column(
+        Modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        isMenuVisible = true
+                    },
+                    onTap = {
+                        onImageClicked(item.id)
+                    },
+                )
+            }) {
         AsyncImage(
             model = item.imagePath,
             contentDescription = null,
@@ -163,6 +185,24 @@ fun ImageItem(item: ImageModel, onImageClicked: (id: Int) -> Unit) {
             color = Color.White
         )
 
+
+        DropdownMenu(
+            expanded = isMenuVisible,
+            onDismissRequest = {
+                isMenuVisible = false
+            },
+            modifier = Modifier
+        ) {
+            Text(
+                modifier = Modifier
+                    .clickable {
+                        isMenuVisible = false
+                        onSave(item.id)
+                    }
+                    .padding(8.dp),
+                text = stringResource(R.string.save_image)
+            )
+        }
     }
 
 }
@@ -220,8 +260,7 @@ fun Header(searchValue: String, onValueChange: (String) -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(searchFieldFocus)
-                        .height(50.dp)
-                    ,
+                        .height(50.dp),
                     textStyle = TextStyle(
                         fontSize = 9.sp,
 
