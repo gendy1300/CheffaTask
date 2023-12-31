@@ -34,6 +34,7 @@ import com.agendy.chefaa.utils.navigation.NavHost
 import com.agendy.chefaa.utils.navigation.NavigationIntent
 import com.agendy.chefaa.utils.navigation.graphs.homeGraph
 import com.agendy.chefaa.utils.navigation.screens.Destination
+import com.agendy.chefaa.utils.navigation.screens.HomeScreens
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.runBlocking
@@ -53,7 +54,9 @@ fun MainScreen(
     val pickMedia =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
             uri?.let {
-                mainViewModel.saveImageToApp(context = context, imageUri = uri)
+                mainViewModel.saveImageToApp(context = context, imageUri = uri){
+                    mainViewModel.appNavigator.tryNavigateTo(HomeScreens.ResizeScreen(it))
+                }
             }
         }
 

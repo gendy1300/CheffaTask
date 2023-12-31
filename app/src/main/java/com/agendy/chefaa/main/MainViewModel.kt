@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 open class MainViewModel @Inject constructor(
-    appNavigator: AppNavigator,
+    val appNavigator: AppNavigator,
     private val localDataBase: ImagesDataBase
 ) : ViewModel() {
 
@@ -38,7 +38,7 @@ open class MainViewModel @Inject constructor(
     }
 
 
-    fun saveImageToApp(imageUri: Uri, context: Context) {
+    fun saveImageToApp(imageUri: Uri, context: Context, onSave: (id:Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val inputStream = context.contentResolver.openInputStream(imageUri)
             val outputStream: OutputStream
@@ -55,12 +55,14 @@ open class MainViewModel @Inject constructor(
                 outputStream.close()
 
 
-                localDataBase.imagesDao.insertImages(
+              val id =  localDataBase.imagesDao.insertImages(
                     ImageModel(
                         imagePath = file.absolutePath,
                         imageCaption = "No Caption"
                     )
                 )
+
+                onSave(id.toInt())
 
             } catch (e: IOException) {
                 e.printStackTrace()
