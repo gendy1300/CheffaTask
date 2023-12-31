@@ -218,9 +218,10 @@ fun Header(searchValue: String, onValueChange: (String) -> Unit) {
                         )
                     },
                     modifier = Modifier
-                        .height(40.dp)
                         .fillMaxWidth()
-                        .focusRequester(searchFieldFocus),
+                        .focusRequester(searchFieldFocus)
+                        .height(50.dp)
+                    ,
                     textStyle = TextStyle(
                         fontSize = 9.sp,
 
